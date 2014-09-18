@@ -1,0 +1,31 @@
+{
+  "name": "gulp-convert-encoding",
+  "version": "0.0.0",
+  "description": "",
+  "license": "MIT",
+  "repository": "alicemurphy/gulp-convert-encoding",
+  "author": {
+    "name": "Alice Murphy",
+    "email": "alice.murphy@akquinet.de",
+    "url": "https://github.com/alicemurphy"
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "files": [
+    "index.js"
+  ],
+  "keywords": [
+    "gulpplugin"
+  ],
+  "dependencies": {
+    "gulp-util": "^3.0.0",
+    "through2": "^0.6.1"
+  },
+  "devDependencies": {
+    "mocha": "*"
+  }
+}
