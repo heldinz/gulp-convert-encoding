@@ -1,7 +1,7 @@
 {
   "name": "gulp-convert-encoding",
-  "version": "0.0.0",
-  "description": "",
+  "version": "0.0.1",
+  "description": "Convert files from one encoding to another.",
   "license": "MIT",
   "repository": "alicemurphy/gulp-convert-encoding",
   "author": {
@@ -19,13 +19,19 @@
     "index.js"
   ],
   "keywords": [
-    "gulpplugin"
+    "gulpplugin",
+    "convert",
+    "encoding",
+    "decoding",
+    "charset"
   ],
   "dependencies": {
     "gulp-util": "^3.0.0",
+    "iconv-lite": "^0.4.4",
     "through2": "^0.6.1"
   },
   "devDependencies": {
-    "mocha": "*"
+    "mocha": "*",
+    "should": "^4.0.4"
   }
 }

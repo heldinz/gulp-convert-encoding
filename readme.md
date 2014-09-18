@@ -1,6 +1,6 @@
 # [gulp](http://gulpjs.com)-convert-encoding [![Build Status](https://travis-ci.org/alicemurphy/gulp-convert-encoding.svg?branch=master)](https://travis-ci.org/alicemurphy/gulp-convert-encoding)
 
-> Lorem ipsum
+> Convert files from one encoding to another.
 
 
 ## Install
@@ -18,7 +18,10 @@ var convertEncoding = require('gulp-convert-encoding');
 
 gulp.task('default', function () {
 	return gulp.src('src/file.ext')
-		.pipe(convertEncoding())
+		.pipe(convertEncoding({
+			fromEncoding: 'iso-8859-15',
+			toEncoding: 'utf-8'
+		}))
 		.pipe(gulp.dest('dist'));
 });
 ```
@@ -30,13 +33,21 @@ gulp.task('default', function () {
 
 #### options
 
-##### foo
+At least one of the following two options must be specified.
 
-Type: `boolean`  
-Default: `false`
+##### fromEncoding
 
-Lorem ipsum.
+Type: `string`  
+Default: `utf-8`
 
+The original file encoding.
+
+##### toEncoding
+
+Type: `string`  
+Default: `utf-8`
+
+The target file encoding.
 
 ## License
 
