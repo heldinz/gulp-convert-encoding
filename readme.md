@@ -1,6 +1,6 @@
 # [gulp](http://gulpjs.com)-convert-encoding [![Build Status](https://travis-ci.org/alicemurphy/gulp-convert-encoding.svg?branch=master)](https://travis-ci.org/alicemurphy/gulp-convert-encoding)
 
-> Convert files from one encoding to another.
+> Convert files from one encoding to another using [iconv-lite](https://github.com/ashtuchkin/iconv-lite).
 
 
 ## Install
@@ -17,11 +17,8 @@ var gulp = require('gulp');
 var convertEncoding = require('gulp-convert-encoding');
 
 gulp.task('default', function () {
-	return gulp.src('src/file.ext')
-		.pipe(convertEncoding({
-			fromEncoding: 'iso-8859-15',
-			toEncoding: 'utf-8'
-		}))
+	return gulp.src('src/file.txt')
+		.pipe(convertEncoding({to: 'iso-8859-15'}))
 		.pipe(gulp.dest('dist'));
 });
 ```
@@ -33,19 +30,21 @@ gulp.task('default', function () {
 
 #### options
 
-At least one of the following two options must be specified.
+One or both of the original or target file encodings must be specified.
 
-##### fromEncoding
+[Supported encodings](https://github.com/ashtuchkin/iconv-lite/wiki/Supported-Encodings) are listed on the iconv-lite wiki.
+
+##### from
 
 Type: `string`  
-Default: `utf-8`
+Default: `utf8`
 
 The original file encoding.
 
-##### toEncoding
+##### to
 
 Type: `string`  
-Default: `utf-8`
+Default: `utf8`
 
 The target file encoding.
 
