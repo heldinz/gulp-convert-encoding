@@ -50,5 +50,3 @@ it('should convert latin1 to utf8', function (cb) {
 
 	stream.end();
 });
-
-// TODO test file types: don't convert images etc.
