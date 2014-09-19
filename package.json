@@ -1,12 +1,12 @@
 {
   "name": "gulp-convert-encoding",
   "version": "0.0.1",
-  "description": "Convert files from one encoding to another.",
+  "description": "Convert files from one encoding to another using iconv-lite.",
   "license": "MIT",
   "repository": "alicemurphy/gulp-convert-encoding",
   "author": {
     "name": "Alice Murphy",
-    "email": "alice.murphy@akquinet.de",
+    "email": "alicemurphy@posteo.de",
     "url": "https://github.com/alicemurphy"
   },
   "engines": {
@@ -20,6 +20,8 @@
   ],
   "keywords": [
     "gulpplugin",
+    "iconv",
+    "iconv-lite",
     "convert",
     "encoding",
     "decoding",
