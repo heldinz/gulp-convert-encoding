@@ -25,17 +25,23 @@ module.exports = function (options) {
 		}
 
 		if (file.isStream()) {
-			this.emit('error', new gutil.PluginError('gulp-convert-encoding', 'Streaming not supported'));
-			cb();
-			return;
+			try {
+				file.contents = file.contents.pipe(iconv.decodeStream(options.from))
+    										 .pipe(iconv.encodeStream(options.to));
+				this.push(file);
+			} catch (err) {
+				this.emit('error', new gutil.PluginError('gulp-convert-encoding', err));
+			}
 		}
 
-		try {
-			var content = iconv.decode(file.contents, options.from);
-        	file.contents = iconv.encode(content, options.to);
-			this.push(file);
-		} catch (err) {
-			this.emit('error', new gutil.PluginError('gulp-convert-encoding', err));
+		if (file.isBuffer()) {
+			try {
+				var content = iconv.decode(file.contents, options.from);
+	        	file.contents = iconv.encode(content, options.to);
+				this.push(file);
+			} catch (err) {
+				this.emit('error', new gutil.PluginError('gulp-convert-encoding', err));
+			}
 		}
 
 		cb();

@@ -3,50 +3,111 @@ var should = require('should');
 var assert = require('assert');
 var gutil = require('gulp-util');
 var iconv = require('iconv-lite');
+var es = require('event-stream');
 var convertEncoding = require('./');
 
 var testString = 'äöüß';
 
-it('should throw on empty options', function () {
-	(function(){
-		var stream = convertEncoding();
-	}).should.throw();
-});
+var UTF8 = 'utf8';
+var LATIN1 = 'iso-8859-15';
 
-it('should convert utf8 to latin1', function (cb) {
-	var stream = convertEncoding({to: 'iso-8859-15'});
+describe('gulp-convert-encoding', function() {
 
-	stream.on('data', function (file) {
-		assert.equal(file.relative, 'file.txt');
-		assert.equal(iconv.decode(file.contents, 'iso-8859-15'), testString);
+	it('should throw on empty options', function () {
+		(function(){
+			var stream = convertEncoding();
+		}).should.throw();
 	});
 
-	stream.on('end', cb);
+	describe('in buffer mode', function() {
+		it('should convert from utf8 to latin1', function (cb) {
+			var stream = convertEncoding({to: LATIN1});
 
-	stream.write(new gutil.File({
-		base: __dirname,
-		path: __dirname + '/file.txt',
-		contents: new Buffer(testString)
-	}));
+			stream.on('data', function (file) {
+				assert(file.isBuffer());
+				assert.equal(file.relative, 'file.txt');
+				assert.equal(iconv.decode(file.contents, LATIN1), testString);
+			});
 
-	stream.end();
-});
+			stream.on('end', cb);
 
-it('should convert latin1 to utf8', function (cb) {
-	var stream = convertEncoding({from: 'iso-8859-15'});
+			stream.write(new gutil.File({
+				base: __dirname,
+				path: __dirname + '/file.txt',
+				contents: new Buffer(testString)
+			}));
 
-	stream.on('data', function (file) {
-		assert.equal(file.relative, 'file.txt');
-		assert.equal(iconv.decode(file.contents, 'utf8'), testString);
+			stream.end();
+		});
+
+		it('should convert from latin1 to utf8', function (cb) {
+			var stream = convertEncoding({from: LATIN1});
+
+			stream.on('data', function (file) {
+				assert(file.isBuffer());
+				assert.equal(file.relative, 'file.txt');
+				assert.equal(iconv.decode(file.contents, UTF8), testString);
+			});
+
+			stream.on('end', cb);
+
+			stream.write(new gutil.File({
+				base: __dirname,
+				path: __dirname + '/file.txt',
+				contents: new Buffer([0xe4, 0xf6, 0xfc, 0xdf])
+			}));
+
+			stream.end();
+		});
 	});
 
-	stream.on('end', cb);
+	describe('in streaming mode', function() {
+		it('should convert from utf8 to latin1', function (cb) {
+			var stream = convertEncoding({to: LATIN1});
 
-	stream.write(new gutil.File({
-		base: __dirname,
-		path: __dirname + '/file.txt',
-		contents: new Buffer([0xe4, 0xf6, 0xfc, 0xdf])
-	}));
+			stream.on('data', function(file) {
+				assert(file.isStream());
+				assert.equal(file.relative, 'file.txt');
 
-	stream.end();
+				// buffer the contents
+				file.contents.pipe(es.wait(function(err, data) {
+					assert.equal(iconv.decode(new Buffer(data), LATIN1), testString);
+				}));
+			});
+
+			stream.on('end', cb);
+
+			stream.write(new gutil.File({
+				base: __dirname,
+				path: __dirname + '/file.txt',
+				contents: es.readArray([testString])
+			}));
+
+			stream.end();
+		});
+
+		it('should convert from latin1 to utf8', function (cb) {
+			var stream = convertEncoding({from: LATIN1});
+
+			stream.on('data', function(file) {
+				assert(file.isStream());
+				assert.equal(file.relative, 'file.txt');
+
+				// buffer the contents
+				file.contents.pipe(es.wait(function(err, data) {
+					assert.equal(iconv.decode(new Buffer(data), UTF8), testString);
+				}));
+			});
+
+			stream.on('end', cb);
+
+			stream.write(new gutil.File({
+				base: __dirname,
+				path: __dirname + '/file.txt',
+				contents: es.readArray([new Buffer([0xe4, 0xf6, 0xfc, 0xdf])])
+			}));
+
+			stream.end();
+		});
+	});
 });
