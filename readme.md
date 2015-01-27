@@ -30,7 +30,7 @@ gulp.task('default', function () {
 
 #### options
 
-One or both of the original or target file encodings must be specified.
+One or both of the original and/or target file encodings must be specified.
 
 [Supported encodings](https://github.com/ashtuchkin/iconv-lite/wiki/Supported-Encodings) are listed on the iconv-lite wiki.
 
@@ -50,4 +50,4 @@ The target file encoding.
 
 ## License
 
-MIT © [Alice Murphy](https://github.com/alicemurphy)
+MIT © [Alice Murphy](https://github.com/heldinz)
