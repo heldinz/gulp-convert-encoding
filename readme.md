@@ -1,4 +1,4 @@
-# [gulp](http://gulpjs.com)-convert-encoding [![Build Status](https://travis-ci.org/heldinz/gulp-convert-encoding.svg?branch=master)](https://travis-ci.org/heldinz/gulp-convert-encoding)
+# [gulp](http://gulpjs.com)-convert-encoding [![Build Status](https://travis-ci.org/heldinz/gulp-convert-encoding.svg?branch=master)](https://travis-ci.org/heldinz/gulp-convert-encoding) [![Dependency Status](https://david-dm.org/heldinz/gulp-convert-encoding.svg)](https://david-dm.org/heldinz/gulp-convert-encoding)
 
 > Convert files from one encoding to another using [iconv-lite](https://github.com/ashtuchkin/iconv-lite).
 
