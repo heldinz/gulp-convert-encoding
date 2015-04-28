@@ -50,4 +50,4 @@ The target file encoding.
 
 ## License
 
-MIT © [Alice Murphy](https://github.com/heldinz)
+MIT © [Alice Rose](https://github.com/heldinz)
