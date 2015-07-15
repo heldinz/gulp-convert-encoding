@@ -19,6 +19,41 @@ describe('gulp-convert-encoding', function() {
 		}).should.throw();
 	});
 
+	it('should throw on binary file', function () {
+		(function(){
+			var stream = convertEncoding({to: LATIN1});
+
+			stream.write(new gutil.File({
+				base: path.join(__dirname, './fixtures/'),
+				cwd: __dirname,
+				path: path.join(__dirname + './fixtures/cat-baby-swing.png')
+			}))
+		}).should.throw();
+	});
+
+	it('should ignore null files', function(cb) {
+		var stream = convertEncoding({to: LATIN1}),
+			  n = 0;
+
+		stream.on('data', function(file) {
+			assert.equal(file.contents, null);
+			n++;
+			assert.equal(n, 1);
+		});
+
+		stream.on('end', function() {
+			cb();
+		});
+
+		stream.write(new gutil.File({
+			base: __dirname,
+			path: __dirname + '/file.txt',
+			contents: null
+		}));
+
+		stream.end();
+	});
+
 	describe('in buffer mode', function() {
 		it('should convert from utf8 to latin1', function (cb) {
 			var stream = convertEncoding({to: LATIN1});
@@ -109,5 +144,6 @@ describe('gulp-convert-encoding', function() {
 
 			stream.end();
 		});
+
 	});
 });
