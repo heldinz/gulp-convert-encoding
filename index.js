@@ -15,6 +15,8 @@ module.exports = function (options) {
 
 	options.from = options.from || UTF8;
 	options.to = options.to || UTF8;
+	options.iconvOptions = options.iconvOptions ? options.iconvOptions :
+		{from: {}, to: {}};
 
 	return through.obj(function (file, enc, cb) {
 
@@ -26,8 +28,8 @@ module.exports = function (options) {
 
 		if (file.isStream()) {
 			try {
-				file.contents = file.contents.pipe(iconv.decodeStream(options.from))
-    										 .pipe(iconv.encodeStream(options.to));
+				file.contents = file.contents.pipe(iconv.decodeStream(options.from, options.iconvOptions.from))
+    										 .pipe(iconv.encodeStream(options.to, options.iconvOptions.to));
 				this.push(file);
 			} catch (err) {
 				this.emit('error', new gutil.PluginError('gulp-convert-encoding', err));
@@ -36,8 +38,8 @@ module.exports = function (options) {
 
 		if (file.isBuffer()) {
 			try {
-				var content = iconv.decode(file.contents, options.from);
-	        	file.contents = iconv.encode(content, options.to);
+				var content = iconv.decode(file.contents, options.from, options.iconvOptions.from);
+	        	file.contents = iconv.encode(content, options.to, options.iconvOptions.to);
 				this.push(file);
 			} catch (err) {
 				this.emit('error', new gutil.PluginError('gulp-convert-encoding', err));
