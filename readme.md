@@ -52,10 +52,10 @@ Default: `utf8`
 
 The target file encoding.
 
-##### iconvOptions
+##### iconv
 
 Type: `object`
-Default: `{from: {}, to: {}}`
+Default: `{decode: {}, encode: {}}`
 
 Allows you to pass additional options into `iconv-lite`. For example [BOM Handling](https://github.com/ashtuchkin/iconv-lite#bom-handling).
 
