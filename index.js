@@ -28,8 +28,9 @@ module.exports = function (options) {
 
 		if (file.isStream()) {
 			try {
-				file.contents = file.contents.pipe(iconv.decodeStream(options.from, options.iconv.decode))
-    										 .pipe(iconv.encodeStream(options.to, options.iconv.encode));
+				file.contents = file.contents
+					.pipe(iconv.decodeStream(options.from, options.iconv.decode))
+					.pipe(iconv.encodeStream(options.to, options.iconv.encode));
 				this.push(file);
 			} catch (err) {
 				this.emit('error', new gutil.PluginError('gulp-convert-encoding', err));
@@ -39,7 +40,7 @@ module.exports = function (options) {
 		if (file.isBuffer()) {
 			try {
 				var content = iconv.decode(file.contents, options.from, options.iconv.decode);
-	        	file.contents = iconv.encode(content, options.to, options.iconv.encode);
+				file.contents = iconv.encode(content, options.to, options.iconv.encode);
 				this.push(file);
 			} catch (err) {
 				this.emit('error', new gutil.PluginError('gulp-convert-encoding', err));
