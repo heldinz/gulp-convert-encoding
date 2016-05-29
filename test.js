@@ -26,7 +26,7 @@ describe('gulp-convert-encoding', function() {
 			stream.write(new gutil.File({
 				base: path.join(__dirname, './fixtures/'),
 				cwd: __dirname,
-				path: path.join(__dirname + './fixtures/cat-baby-swing.png')
+				path: path.join(__dirname + './fixtures/1x1.png')
 			}))
 		}).should.throw();
 	});
