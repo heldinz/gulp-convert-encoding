@@ -54,10 +54,10 @@ The target file encoding.
 
 ##### iconv
 
-Type: `object`
+Type: `object`  
 Default: `{decode: {}, encode: {}}`
 
-Allows you to pass additional options into `iconv-lite`. For example [BOM Handling](https://github.com/ashtuchkin/iconv-lite#bom-handling).
+Allows you to pass additional options into `iconv-lite`, for example [BOM Handling](https://github.com/ashtuchkin/iconv-lite#bom-handling).
 
 ## License
 
