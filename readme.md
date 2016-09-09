@@ -1,3 +1,5 @@
+[![NPM](https://nodei.co/npm/gulp-convert-encoding.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/gulp-convert-encoding/)
+
 # [gulp](http://gulpjs.com)-convert-encoding
 [![Build Status](https://travis-ci.org/heldinz/gulp-convert-encoding.svg?branch=master)](https://travis-ci.org/heldinz/gulp-convert-encoding)
 [![Coverage Status](https://coveralls.io/repos/heldinz/gulp-convert-encoding/badge.svg?branch=master)](https://coveralls.io/r/heldinz/gulp-convert-encoding?branch=master)
