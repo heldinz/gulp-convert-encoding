@@ -1,8 +1,9 @@
 'use strict';
 var should = require('should');
 var assert = require('assert');
-var gutil = require('gulp-util');
+var Vinyl = require('vinyl');
 var iconv = require('iconv-lite');
+var mystream = require('stream');
 var es = require('event-stream');
 var convertEncoding = require('./');
 
@@ -23,7 +24,7 @@ describe('gulp-convert-encoding', function() {
 		(function(){
 			var stream = convertEncoding({to: LATIN1});
 
-			stream.write(new gutil.File({
+			stream.write(new Vinyl({
 				base: path.join(__dirname, './fixtures/'),
 				cwd: __dirname,
 				path: path.join(__dirname + './fixtures/1x1.png')
@@ -45,7 +46,7 @@ describe('gulp-convert-encoding', function() {
 			cb();
 		});
 
-		stream.write(new gutil.File({
+		stream.write(new Vinyl({
 			base: __dirname,
 			path: __dirname + '/file.txt',
 			contents: null
@@ -66,10 +67,10 @@ describe('gulp-convert-encoding', function() {
 
 			stream.on('end', cb);
 
-			stream.write(new gutil.File({
+			stream.write(new Vinyl({
 				base: __dirname,
 				path: __dirname + '/file.txt',
-				contents: new Buffer(testString)
+				contents: Buffer.from(testString)
 			}));
 
 			stream.end();
@@ -86,10 +87,10 @@ describe('gulp-convert-encoding', function() {
 
 			stream.on('end', cb);
 
-			stream.write(new gutil.File({
+			stream.write(new Vinyl({
 				base: __dirname,
 				path: __dirname + '/file.txt',
-				contents: new Buffer([0xe4, 0xf6, 0xfc, 0xdf])
+				contents: Buffer.from([0xe4, 0xf6, 0xfc, 0xdf])
 			}));
 
 			stream.end();
@@ -106,16 +107,16 @@ describe('gulp-convert-encoding', function() {
 
 				// buffer the contents
 				file.contents.pipe(es.wait(function(err, data) {
-					assert.equal(iconv.decode(new Buffer(data), LATIN1), testString);
+					assert.equal(iconv.decode(Buffer.from(data), LATIN1), testString);
 				}));
 			});
 
 			stream.on('end', cb);
 
-			stream.write(new gutil.File({
+			stream.write(new Vinyl({
 				base: __dirname,
 				path: __dirname + '/file.txt',
-				contents: es.readArray([testString])
+				contents: new mystream.Readable({objectMode: true}).wrap(es.readArray([testString]))
 			}));
 
 			stream.end();
@@ -130,16 +131,16 @@ describe('gulp-convert-encoding', function() {
 
 				// buffer the contents
 				file.contents.pipe(es.wait(function(err, data) {
-					assert.equal(iconv.decode(new Buffer(data), UTF8), testString);
+					assert.equal(iconv.decode(Buffer.from(data), UTF8), testString);
 				}));
 			});
 
 			stream.on('end', cb);
 
-			stream.write(new gutil.File({
+			stream.write(new Vinyl({
 				base: __dirname,
 				path: __dirname + '/file.txt',
-				contents: es.readArray([new Buffer([0xe4, 0xf6, 0xfc, 0xdf])])
+				contents: new mystream.Readable({objectMode: true}).wrap(es.readArray([Buffer.from([0xe4, 0xf6, 0xfc, 0xdf])]))
 			}));
 
 			stream.end();
