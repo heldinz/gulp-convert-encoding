@@ -1,6 +1,6 @@
 {
   "name": "gulp-convert-encoding",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "description": "Convert files from one encoding to another using iconv-lite.",
   "license": "MIT",
   "repository": "heldinz/gulp-convert-encoding",
