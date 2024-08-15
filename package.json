@@ -14,8 +14,8 @@
   },
   "scripts": {
     "test": "mocha -R spec",
-    "coverage": "nyc --reporter=html npm run test",
-    "coveralls": "nyc --reporter=lcovonly npm run test && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
+    "coverage:html": "nyc --reporter=html npm run test",
+    "coverage:lcov": "nyc --reporter=lcovonly npm run test"
   },
   "files": [
     "index.js"
