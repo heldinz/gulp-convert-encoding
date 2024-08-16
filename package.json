@@ -40,7 +40,7 @@
 		"charset"
 	],
 	"dependencies": {
-		"iconv-lite": "0.5.1",
+		"iconv-lite": "0.6.3",
 		"plugin-error": "1.0.1",
 		"through2": "3.0.1"
 	},
