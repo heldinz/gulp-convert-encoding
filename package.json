@@ -27,9 +27,7 @@
 		"'.*rc', '*.{js,json,md}'": "prettier --write",
 		"*.js": "npm run lint"
 	},
-	"files": [
-		"index.js"
-	],
+	"files": ["index.js"],
 	"keywords": [
 		"gulpplugin",
 		"iconv",
