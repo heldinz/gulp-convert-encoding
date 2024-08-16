@@ -1,8 +1,6 @@
 # [gulp](http://gulpjs.com)-convert-encoding
 
-![Build Status](https://github.com/heldinz/gulp-convert-encoding/actions/workflows/main.yml/badge.svg)
-[![Coverage Status](https://coveralls.io/repos/heldinz/gulp-convert-encoding/badge.svg?branch=main)](https://coveralls.io/r/heldinz/gulp-convert-encoding?branch=main)
-[![NPM Downloads](https://img.shields.io/npm/dm/gulp-convert-encoding.svg)](https://www.npmjs.com/package/gulp-convert-encoding)
+[![NPM version][npm-image]][npm-url] [![Downloads][downloads-image]][npm-url] ![Build Status][ci-image] [![Coveralls Status][coveralls-image]][coveralls-url]
 
 > Convert file encodings using [iconv-lite](https://github.com/ashtuchkin/iconv-lite).
 
@@ -57,6 +55,13 @@ Default: `{ decode: {}, encode: {} }`
 
 Allows you to pass additional options into `iconv-lite`, for example [BOM Handling](https://github.com/ashtuchkin/iconv-lite#bom-handling).
 
-## License
+<!-- prettier-ignore-start -->
+[npm-url]: https://www.npmjs.com/package/gulp-convert-encoding
+[npm-image]: https://img.shields.io/npm/v/gulp-convert-encoding.svg?style=flat-square
+[downloads-image]: https://img.shields.io/npm/dm/gulp-convert-encoding.svg?style=flat-square
 
-MIT © [Alice Rose](https://github.com/heldinz)
+[ci-image]: https://img.shields.io/github/actions/workflow/status/heldinz/gulp-convert-encoding/main.yml?branch=main&style=flat-square
+
+[coveralls-url]: https://coveralls.io/r/heldinz/gulp-convert-encoding?branch=main
+[coveralls-image]: https://img.shields.io/coverallsCoverage/github/heldinz/gulp-convert-encoding?branch=main&style=flat-square
+<!-- prettier-ignore-end -->
