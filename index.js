@@ -10,16 +10,17 @@ module.exports = function (options) {
 	options = options || {};
 
 	if (!options.from && !options.to) {
-		throw new pluginError('gulp-convert-encoding', 'At least one of `from` or `to` required');
+		throw new pluginError(
+			'gulp-convert-encoding',
+			'At least one of `from` or `to` required',
+		);
 	}
 
 	options.from = options.from || UTF8;
 	options.to = options.to || UTF8;
-	options.iconv = options.iconv ? options.iconv :
-		{decode: {}, encode: {}};
+	options.iconv = options.iconv ? options.iconv : { decode: {}, encode: {} };
 
 	return through.obj(function (file, enc, cb) {
-
 		if (file.isNull()) {
 			this.push(file);
 			cb();
@@ -39,7 +40,11 @@ module.exports = function (options) {
 
 		if (file.isBuffer()) {
 			try {
-				var content = iconv.decode(file.contents, options.from, options.iconv.decode);
+				var content = iconv.decode(
+					file.contents,
+					options.from,
+					options.iconv.decode,
+				);
 				file.contents = iconv.encode(content, options.to, options.iconv.encode);
 				this.push(file);
 			} catch (err) {

@@ -12,52 +12,55 @@ var testString = 'äöüß';
 var UTF8 = 'utf8';
 var LATIN1 = 'iso-8859-15';
 
-describe('gulp-convert-encoding', function() {
-
+describe('gulp-convert-encoding', function () {
 	it('should throw on empty options', function () {
-		(function(){
+		(function () {
 			var stream = convertEncoding();
 		}).should.throw();
 	});
 
 	it('should throw on binary file', function () {
-		(function(){
-			var stream = convertEncoding({to: LATIN1});
+		(function () {
+			var stream = convertEncoding({ to: LATIN1 });
 
-			stream.write(new Vinyl({
-				base: path.join(__dirname, './fixtures/'),
-				cwd: __dirname,
-				path: path.join(__dirname + './fixtures/1x1.png')
-			}))
+			stream.write(
+				new Vinyl({
+					base: path.join(__dirname, './fixtures/'),
+					cwd: __dirname,
+					path: path.join(__dirname + './fixtures/1x1.png'),
+				}),
+			);
 		}).should.throw();
 	});
 
-	it('should ignore null files', function(cb) {
-		var stream = convertEncoding({to: LATIN1}),
-			  n = 0;
+	it('should ignore null files', function (cb) {
+		var stream = convertEncoding({ to: LATIN1 }),
+			n = 0;
 
-		stream.on('data', function(file) {
+		stream.on('data', function (file) {
 			assert.equal(file.contents, null);
 			n++;
 			assert.equal(n, 1);
 		});
 
-		stream.on('end', function() {
+		stream.on('end', function () {
 			cb();
 		});
 
-		stream.write(new Vinyl({
-			base: __dirname,
-			path: __dirname + '/file.txt',
-			contents: null
-		}));
+		stream.write(
+			new Vinyl({
+				base: __dirname,
+				path: __dirname + '/file.txt',
+				contents: null,
+			}),
+		);
 
 		stream.end();
 	});
 
-	describe('in buffer mode', function() {
+	describe('in buffer mode', function () {
 		it('should convert from utf8 to latin1', function (cb) {
-			var stream = convertEncoding({to: LATIN1});
+			var stream = convertEncoding({ to: LATIN1 });
 
 			stream.on('data', function (file) {
 				assert(file.isBuffer());
@@ -67,17 +70,19 @@ describe('gulp-convert-encoding', function() {
 
 			stream.on('end', cb);
 
-			stream.write(new Vinyl({
-				base: __dirname,
-				path: __dirname + '/file.txt',
-				contents: Buffer.from(testString)
-			}));
+			stream.write(
+				new Vinyl({
+					base: __dirname,
+					path: __dirname + '/file.txt',
+					contents: Buffer.from(testString),
+				}),
+			);
 
 			stream.end();
 		});
 
 		it('should convert from latin1 to utf8', function (cb) {
-			var stream = convertEncoding({from: LATIN1});
+			var stream = convertEncoding({ from: LATIN1 });
 
 			stream.on('data', function (file) {
 				assert(file.isBuffer());
@@ -87,64 +92,77 @@ describe('gulp-convert-encoding', function() {
 
 			stream.on('end', cb);
 
-			stream.write(new Vinyl({
-				base: __dirname,
-				path: __dirname + '/file.txt',
-				contents: Buffer.from([0xe4, 0xf6, 0xfc, 0xdf])
-			}));
+			stream.write(
+				new Vinyl({
+					base: __dirname,
+					path: __dirname + '/file.txt',
+					contents: Buffer.from([0xe4, 0xf6, 0xfc, 0xdf]),
+				}),
+			);
 
 			stream.end();
 		});
 	});
 
-	describe('in streaming mode', function() {
+	describe('in streaming mode', function () {
 		it('should convert from utf8 to latin1', function (cb) {
-			var stream = convertEncoding({to: LATIN1});
+			var stream = convertEncoding({ to: LATIN1 });
 
-			stream.on('data', function(file) {
+			stream.on('data', function (file) {
 				assert(file.isStream());
 				assert.equal(file.relative, 'file.txt');
 
 				// buffer the contents
-				file.contents.pipe(es.wait(function(err, data) {
-					assert.equal(iconv.decode(Buffer.from(data), LATIN1), testString);
-				}));
+				file.contents.pipe(
+					es.wait(function (err, data) {
+						assert.equal(iconv.decode(Buffer.from(data), LATIN1), testString);
+					}),
+				);
 			});
 
 			stream.on('end', cb);
 
-			stream.write(new Vinyl({
-				base: __dirname,
-				path: __dirname + '/file.txt',
-				contents: new mystream.Readable({objectMode: true}).wrap(es.readArray([testString]))
-			}));
+			stream.write(
+				new Vinyl({
+					base: __dirname,
+					path: __dirname + '/file.txt',
+					contents: new mystream.Readable({ objectMode: true }).wrap(
+						es.readArray([testString]),
+					),
+				}),
+			);
 
 			stream.end();
 		});
 
 		it('should convert from latin1 to utf8', function (cb) {
-			var stream = convertEncoding({from: LATIN1});
+			var stream = convertEncoding({ from: LATIN1 });
 
-			stream.on('data', function(file) {
+			stream.on('data', function (file) {
 				assert(file.isStream());
 				assert.equal(file.relative, 'file.txt');
 
 				// buffer the contents
-				file.contents.pipe(es.wait(function(err, data) {
-					assert.equal(iconv.decode(Buffer.from(data), UTF8), testString);
-				}));
+				file.contents.pipe(
+					es.wait(function (err, data) {
+						assert.equal(iconv.decode(Buffer.from(data), UTF8), testString);
+					}),
+				);
 			});
 
 			stream.on('end', cb);
 
-			stream.write(new Vinyl({
-				base: __dirname,
-				path: __dirname + '/file.txt',
-				contents: new mystream.Readable({objectMode: true}).wrap(es.readArray([Buffer.from([0xe4, 0xf6, 0xfc, 0xdf])]))
-			}));
+			stream.write(
+				new Vinyl({
+					base: __dirname,
+					path: __dirname + '/file.txt',
+					contents: new mystream.Readable({ objectMode: true }).wrap(
+						es.readArray([Buffer.from([0xe4, 0xf6, 0xfc, 0xdf])]),
+					),
+				}),
+			);
 
 			stream.end();
 		});
-
 	});
 });
