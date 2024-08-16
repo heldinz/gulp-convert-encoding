@@ -1,6 +1,6 @@
 # [gulp](http://gulpjs.com)-convert-encoding
 
-[![Build Status](https://travis-ci.org/heldinz/gulp-convert-encoding.svg?branch=master)](https://travis-ci.org/heldinz/gulp-convert-encoding)
+![Build Status](https://github.com/heldinz/gulp-convert-encoding/actions/workflows/main.yml/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/heldinz/gulp-convert-encoding/badge.svg?branch=main)](https://coveralls.io/r/heldinz/gulp-convert-encoding?branch=main)
 [![NPM Downloads](https://img.shields.io/npm/dm/gulp-convert-encoding.svg)](https://www.npmjs.com/package/gulp-convert-encoding)
 
