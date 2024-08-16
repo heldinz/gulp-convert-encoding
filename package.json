@@ -1,46 +1,59 @@
 {
-  "name": "gulp-convert-encoding",
-  "version": "3.0.0",
-  "description": "Convert file encodings using iconv-lite.",
-  "license": "MIT",
-  "repository": "heldinz/gulp-convert-encoding",
-  "author": {
-    "name": "Alice Rose",
-    "email": "hello@alicerosemurphy.com",
-    "url": "https://github.com/heldinz"
-  },
-  "engines": {
-    "node": ">=14.0.0"
-  },
-  "scripts": {
-    "test": "mocha -R spec",
-    "coverage:html": "nyc --reporter=html npm run test",
-    "coverage:lcov": "nyc --reporter=lcovonly npm run test"
-  },
-  "files": [
-    "index.js"
-  ],
-  "keywords": [
-    "gulpplugin",
-    "iconv",
-    "iconv-lite",
-    "convert",
-    "file encoding",
-    "file decoding",
-    "charset"
-  ],
-  "dependencies": {
-    "iconv-lite": "0.5.1",
-    "plugin-error": "1.0.1",
-    "through2": "3.0.1"
-  },
-  "devDependencies": {
-    "event-stream": "3.3.4",
-    "mocha": "10.1.0",
-    "mocha-lcov-reporter": "1.3.0",
-    "nyc": "15.1.0",
-    "should": "13.2.3",
-    "through": "2.3.8",
-    "vinyl": "2.2.0"
-  }
+	"name": "gulp-convert-encoding",
+	"version": "3.0.0",
+	"description": "Convert file encodings using iconv-lite.",
+	"license": "MIT",
+	"repository": "heldinz/gulp-convert-encoding",
+	"author": {
+		"name": "Alice Rose",
+		"email": "hello@alicerosemurphy.com",
+		"url": "https://github.com/heldinz"
+	},
+	"engines": {
+		"node": ">=14.0.0"
+	},
+	"scripts": {
+		"coverage:html": "nyc --reporter=html npm test",
+		"coverage:lcov": "nyc --reporter=lcovonly npm test",
+		"format": "npm run prettier -- --write",
+		"lint": "echo 'TODO: linting'",
+		"prettier": "prettier .*rc *.{js,json,md}",
+		"test": "mocha -R spec",
+		"test:watch": "npm test -- --watch",
+		"validate": "npm run lint && npm run prettier -- --list-different",
+		"prepare": "husky"
+	},
+	"lint-staged": {
+		"'.*rc', '*.{js,json,md}'": "prettier --write",
+		"*.js": "npm run lint"
+	},
+	"files": [
+		"index.js"
+	],
+	"keywords": [
+		"gulpplugin",
+		"iconv",
+		"iconv-lite",
+		"convert",
+		"file encoding",
+		"file decoding",
+		"charset"
+	],
+	"dependencies": {
+		"iconv-lite": "0.5.1",
+		"plugin-error": "1.0.1",
+		"through2": "3.0.1"
+	},
+	"devDependencies": {
+		"event-stream": "3.3.4",
+		"husky": "9.1.4",
+		"lint-staged": "15.2.9",
+		"mocha": "10.1.0",
+		"mocha-lcov-reporter": "1.3.0",
+		"nyc": "15.1.0",
+		"prettier": "3.3.3",
+		"should": "13.2.3",
+		"through": "2.3.8",
+		"vinyl": "2.2.0"
+	}
 }

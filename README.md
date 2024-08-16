@@ -15,14 +15,14 @@ npm install --save-dev gulp-convert-encoding
 ## Usage
 
 ```js
-var gulp = require("gulp");
-var convertEncoding = require("gulp-convert-encoding");
+var gulp = require('gulp');
+var convertEncoding = require('gulp-convert-encoding');
 
-gulp.task("default", function () {
+gulp.task('default', function () {
 	return gulp
-		.src("src/file.txt")
-		.pipe(convertEncoding({ to: "iso-8859-15" }))
-		.pipe(gulp.dest("dist"));
+		.src('src/file.txt')
+		.pipe(convertEncoding({ to: 'iso-8859-15' }))
+		.pipe(gulp.dest('dist'));
 });
 ```
 
