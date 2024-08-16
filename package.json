@@ -16,7 +16,7 @@
 		"coverage:html": "nyc --reporter=html npm test",
 		"coverage:lcov": "nyc --reporter=lcovonly npm test",
 		"format": "npm run prettier -- --write",
-		"lint": "echo 'TODO: linting'",
+		"lint": "echo 'TODO: lint JS'",
 		"prettier": "prettier .*rc *.{js,json,md}",
 		"test": "mocha -R spec",
 		"test:watch": "npm test -- --watch",
@@ -24,7 +24,8 @@
 		"prepare": "husky"
 	},
 	"lint-staged": {
-		"'.*rc', '*.{js,json,md}'": "prettier --write",
+		"*.{js,json,md}": "npm run format",
+		".*rc": "npm run format",
 		"*.js": "npm run lint"
 	},
 	"files": ["index.js"],
