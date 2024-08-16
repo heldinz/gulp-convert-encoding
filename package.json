@@ -43,7 +43,7 @@
 		"through2": "3.0.2"
 	},
 	"devDependencies": {
-		"event-stream": "3.3.4",
+		"event-stream": "4.0.1",
 		"husky": "9.1.4",
 		"lint-staged": "15.2.9",
 		"mocha": "10.1.0",
