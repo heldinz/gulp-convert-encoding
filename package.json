@@ -10,7 +10,7 @@
 		"url": "https://github.com/heldinz"
 	},
 	"engines": {
-		"node": ">=14.0.0"
+		"node": ">=18.0.0"
 	},
 	"scripts": {
 		"coverage:html": "nyc --reporter=html npm test",
