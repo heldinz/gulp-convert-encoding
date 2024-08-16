@@ -1,58 +1,72 @@
 {
 	"name": "gulp-convert-encoding",
 	"version": "3.0.0",
-	"description": "Convert file encodings using iconv-lite.",
+	"description": "Convert character encodings using iconv-lite.",
 	"license": "MIT",
 	"repository": "heldinz/gulp-convert-encoding",
 	"author": {
 		"name": "Alice Rose",
 		"email": "hello@alicerosemurphy.com",
-		"url": "https://github.com/heldinz"
+		"url": "https://www.alicerosemurphy.com"
 	},
+	"type": "module",
+	"exports": "./index.js",
 	"engines": {
-		"node": ">=18.0.0"
+		"node": ">=18"
 	},
 	"scripts": {
-		"coverage:html": "nyc --reporter=html npm test",
-		"coverage:lcov": "nyc --reporter=lcovonly npm test",
-		"format": "npm run prettier -- --write",
-		"lint": "echo 'TODO: lint JS'",
+		"coverage": "c8 -r lcovonly npm test",
+		"formatter": "npm run prettier -- --list-different",
+		"formatter:fix": "npm run prettier -- --write",
+		"linter": "eslint *.js",
+		"linter:fix": "npm run linter -- --fix",
 		"prettier": "prettier .*rc *.{js,json,md}",
-		"test": "mocha -R spec",
+		"test": "ava",
 		"test:watch": "npm test -- --watch",
-		"validate": "npm run lint && npm run prettier -- --list-different",
 		"prepare": "husky"
 	},
 	"lint-staged": {
-		"*.{js,json,md}": "npm run format",
-		".*rc": "npm run format",
-		"*.js": "npm run lint"
+		"*.{js,json,md}": "prettier --write",
+		".*rc": "prettier --write",
+		"*.js": ["eslint --fix", "prettier --write"]
 	},
 	"files": ["index.js"],
 	"keywords": [
+		"character encoding",
+		"character decoding",
+		"charset",
+		"convert",
+		"decoding",
+		"encoding",
+		"encodings",
+		"gulp",
 		"gulpplugin",
 		"iconv",
-		"iconv-lite",
-		"convert",
-		"file encoding",
-		"file decoding",
-		"charset"
+		"iconv-lite"
 	],
 	"dependencies": {
+		"gulp-plugin-extras": "1.0.0",
 		"iconv-lite": "0.6.3",
-		"plugin-error": "1.0.1",
-		"through2": "3.0.2"
+		"plugin-error": "2.0.1"
 	},
 	"devDependencies": {
-		"event-stream": "3.3.4",
+		"@eslint/js": "9.9.0",
+		"ava": "6.1.3",
+		"c8": "10.1.2",
+		"eslint": "8.57.0",
+		"globals": "15.9.0",
 		"husky": "9.1.4",
 		"lint-staged": "15.2.9",
-		"mocha": "10.1.0",
-		"mocha-lcov-reporter": "1.3.0",
-		"nyc": "15.1.0",
+		"p-event": "6.0.1",
 		"prettier": "3.3.3",
-		"should": "13.2.3",
-		"through": "2.3.8",
-		"vinyl": "2.2.0"
+		"vinyl": "3.0.0"
+	},
+	"peerDependencies": {
+		"gulp": ">=5"
+	},
+	"peerDependenciesMeta": {
+		"gulp": {
+			"optional": true
+		}
 	}
 }

@@ -1,168 +1,177 @@
-'use strict';
-var should = require('should');
-var assert = require('assert');
-var Vinyl = require('vinyl');
-var iconv = require('iconv-lite');
-var mystream = require('stream');
-var es = require('event-stream');
-var convertEncoding = require('./');
+import { Buffer } from 'node:buffer';
+import { buffer } from 'node:stream/consumers';
 
-var testString = 'äöüß';
+import test from 'ava';
+import { pEvent } from 'p-event';
+import PluginError from 'plugin-error';
 
-var UTF8 = 'utf8';
-var LATIN1 = 'iso-8859-15';
+import Constants, {
+	createFile,
+	setUpFromLatin1Buffer,
+	setUpFromLatin1Stream,
+	setUpFromUTF8Buffer,
+	setUpFromUTF8Stream,
+} from './_helper.js';
+import convertEncoding from './index.js';
 
-describe('gulp-convert-encoding', function () {
-	it('should throw on empty options', function () {
-		(function () {
-			var stream = convertEncoding();
-		}).should.throw();
+const { LATIN1, UTF8 } = Constants;
+
+test('throws on empty options', (t) => {
+	t.throws(convertEncoding, {
+		any: true,
+		instanceOf: PluginError,
+		message: 'At least one of `options.from` or `options.to` is required',
 	});
+});
 
-	it('should throw on binary file', function () {
-		(function () {
-			var stream = convertEncoding({ to: LATIN1 });
+test('throws on identical `from` and `to` options', (t) => {
+	t.throws(
+		() => {
+			convertEncoding({ from: UTF8 });
+		},
+		{
+			any: true,
+			instanceOf: PluginError,
+			message:
+				'The `options.from` and `options.to` encodings must be different',
+		},
+	);
+});
 
-			stream.write(
-				new Vinyl({
-					base: path.join(__dirname, './fixtures/'),
-					cwd: __dirname,
-					path: path.join(__dirname + './fixtures/1x1.png'),
-				}),
-			);
-		}).should.throw();
+test('throws on non-object `iconv` option', (t) => {
+	t.throws(
+		() => {
+			convertEncoding({ from: LATIN1, iconv: '' });
+		},
+		{
+			any: true,
+			instanceOf: PluginError,
+			message: '`options.iconv` must be an object',
+		},
+	);
+});
+
+test('throws on empty `iconv` option', (t) => {
+	t.throws(
+		() => {
+			convertEncoding({ from: LATIN1, iconv: {} });
+		},
+		{
+			any: true,
+			instanceOf: PluginError,
+			message:
+				'`options.iconv` must specify a value for one or both of the properties `decode` and `encode`',
+		},
+	);
+});
+
+test('throws on non-object `iconv.decode` option', (t) => {
+	t.throws(
+		() => {
+			convertEncoding({ from: LATIN1, iconv: { decode: '' } });
+		},
+		{
+			any: true,
+			instanceOf: PluginError,
+			message: '`options.iconv.decode` must be an object`',
+		},
+	);
+});
+
+test('throws on non-object `iconv.encode` option', (t) => {
+	t.throws(
+		() => {
+			convertEncoding({ from: LATIN1, iconv: { encode: 4 } });
+		},
+		{
+			any: true,
+			instanceOf: PluginError,
+			message: '`options.iconv.encode` must be an object`',
+		},
+	);
+});
+
+test('does not throw when only `iconv.decode` is missing', (t) => {
+	t.notThrows(() => {
+		convertEncoding({ from: LATIN1, iconv: { encode: {} } });
 	});
+});
 
-	it('should ignore null files', function (cb) {
-		var stream = convertEncoding({ to: LATIN1 }),
-			n = 0;
-
-		stream.on('data', function (file) {
-			assert.equal(file.contents, null);
-			n++;
-			assert.equal(n, 1);
-		});
-
-		stream.on('end', function () {
-			cb();
-		});
-
-		stream.write(
-			new Vinyl({
-				base: __dirname,
-				path: __dirname + '/file.txt',
-				contents: null,
-			}),
-		);
-
-		stream.end();
+test('does not throw when only `iconv.encode` is missing', (t) => {
+	t.notThrows(() => {
+		convertEncoding({ from: LATIN1, iconv: { decode: {} } });
 	});
+});
 
-	describe('in buffer mode', function () {
-		it('should convert from utf8 to latin1', function (cb) {
-			var stream = convertEncoding({ to: LATIN1 });
+test('ignores null files', async (t) => {
+	const stream = convertEncoding({ to: LATIN1 });
+	const promise = pEvent(stream, 'data');
 
-			stream.on('data', function (file) {
-				assert(file.isBuffer());
-				assert.equal(file.relative, 'file.txt');
-				assert.equal(iconv.decode(file.contents, LATIN1), testString);
-			});
+	stream.end(createFile({ contents: null }));
 
-			stream.on('end', cb);
+	const file = await promise;
+	const actual = file.contents;
+	const expected = null;
 
-			stream.write(
-				new Vinyl({
-					base: __dirname,
-					path: __dirname + '/file.txt',
-					contents: Buffer.from(testString),
-				}),
-			);
+	t.is(actual, expected);
+});
 
-			stream.end();
-		});
+test(`converts a buffer from ${UTF8} to ${LATIN1}`, async (t) => {
+	const { to, iconvLiteTo, vinylFile, expected } = setUpFromUTF8Buffer();
 
-		it('should convert from latin1 to utf8', function (cb) {
-			var stream = convertEncoding({ from: LATIN1 });
+	const stream = convertEncoding({ to: iconvLiteTo });
+	const promise = pEvent(stream, 'data');
 
-			stream.on('data', function (file) {
-				assert(file.isBuffer());
-				assert.equal(file.relative, 'file.txt');
-				assert.equal(iconv.decode(file.contents, UTF8), testString);
-			});
+	stream.end(vinylFile);
 
-			stream.on('end', cb);
+	const file = await promise;
+	const contentsBuffer = Buffer.from(file.contents, to);
+	const actual = contentsBuffer.toString(to);
 
-			stream.write(
-				new Vinyl({
-					base: __dirname,
-					path: __dirname + '/file.txt',
-					contents: Buffer.from([0xe4, 0xf6, 0xfc, 0xdf]),
-				}),
-			);
+	t.is(actual, expected);
+});
 
-			stream.end();
-		});
-	});
+test(`converts a buffer from ${LATIN1} to ${UTF8}`, async (t) => {
+	const { to, iconvLiteFrom, vinylFile, expected } = setUpFromLatin1Buffer();
 
-	describe('in streaming mode', function () {
-		it('should convert from utf8 to latin1', function (cb) {
-			var stream = convertEncoding({ to: LATIN1 });
+	const stream = convertEncoding({ from: iconvLiteFrom });
+	const promise = pEvent(stream, 'data');
 
-			stream.on('data', function (file) {
-				assert(file.isStream());
-				assert.equal(file.relative, 'file.txt');
+	stream.end(vinylFile);
 
-				// buffer the contents
-				file.contents.pipe(
-					es.wait(function (err, data) {
-						assert.equal(iconv.decode(Buffer.from(data), LATIN1), testString);
-					}),
-				);
-			});
+	const file = await promise;
+	const contentsBuffer = Buffer.from(file.contents, to);
+	const actual = contentsBuffer.toString(to);
 
-			stream.on('end', cb);
+	t.is(actual, expected);
+});
 
-			stream.write(
-				new Vinyl({
-					base: __dirname,
-					path: __dirname + '/file.txt',
-					contents: new mystream.Readable({ objectMode: true }).wrap(
-						es.readArray([testString]),
-					),
-				}),
-			);
+test(`converts a stream from ${UTF8} to ${LATIN1}`, async (t) => {
+	const { to, iconvLiteTo, vinylFile, expected } = setUpFromUTF8Stream();
 
-			stream.end();
-		});
+	const stream = convertEncoding({ to: iconvLiteTo });
+	const promise = pEvent(stream, 'data');
 
-		it('should convert from latin1 to utf8', function (cb) {
-			var stream = convertEncoding({ from: LATIN1 });
+	stream.end(vinylFile);
 
-			stream.on('data', function (file) {
-				assert(file.isStream());
-				assert.equal(file.relative, 'file.txt');
+	const file = await promise;
+	const contentsBuffer = await buffer(file.contents);
+	const actual = contentsBuffer.toString(to);
 
-				// buffer the contents
-				file.contents.pipe(
-					es.wait(function (err, data) {
-						assert.equal(iconv.decode(Buffer.from(data), UTF8), testString);
-					}),
-				);
-			});
+	t.is(actual, expected);
+});
 
-			stream.on('end', cb);
+test(`converts a stream from ${LATIN1} to ${UTF8}`, async (t) => {
+	const { to, iconvLiteFrom, vinylFile, expected } = setUpFromLatin1Stream();
 
-			stream.write(
-				new Vinyl({
-					base: __dirname,
-					path: __dirname + '/file.txt',
-					contents: new mystream.Readable({ objectMode: true }).wrap(
-						es.readArray([Buffer.from([0xe4, 0xf6, 0xfc, 0xdf])]),
-					),
-				}),
-			);
+	const stream = convertEncoding({ from: iconvLiteFrom });
+	const promise = pEvent(stream, 'data');
 
-			stream.end();
-		});
-	});
+	stream.end(vinylFile);
+
+	const file = await promise;
+	const contentsBuffer = await buffer(file.contents);
+	const actual = contentsBuffer.toString(to);
+
+	t.is(actual, expected);
 });

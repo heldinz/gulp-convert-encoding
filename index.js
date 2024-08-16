@@ -1,57 +1,79 @@
-'use strict';
-var pluginError = require('plugin-error');
-var through = require('through2');
-var iconv = require('iconv-lite');
+import iconv from 'iconv-lite';
+import { gulpPlugin } from 'gulp-plugin-extras';
+import PluginError from 'plugin-error';
 
-// Constants
-var UTF8 = 'utf8';
+const pluginName = 'gulp-convert-encoding';
+const UTF8 = 'utf8';
 
-module.exports = function (options) {
-	options = options || {};
+export default function gulpConvertEncoding(options) {
+	options = { ...options };
 
 	if (!options.from && !options.to) {
-		throw new pluginError(
-			'gulp-convert-encoding',
-			'At least one of `from` or `to` required',
-		);
+		throw new PluginError(pluginName, {
+			message: 'At least one of `options.from` or `options.to` is required',
+		});
 	}
 
-	options.from = options.from || UTF8;
-	options.to = options.to || UTF8;
-	options.iconv = options.iconv ? options.iconv : { decode: {}, encode: {} };
+	const {
+		from = UTF8,
+		to = UTF8,
+		iconv: iconvOptions = { decode: {}, encode: {} },
+	} = options;
 
-	return through.obj(function (file, enc, cb) {
-		if (file.isNull()) {
-			this.push(file);
-			cb();
-			return;
-		}
+	if (from === to) {
+		throw new PluginError(pluginName, {
+			message:
+				'The `options.from` and `options.to` encodings must be different',
+		});
+	}
 
-		if (file.isStream()) {
-			try {
+	if (typeof iconvOptions !== 'object') {
+		throw new PluginError(pluginName, {
+			message: '`options.iconv` must be an object',
+		});
+	}
+
+	// TODO sort out this mess with JS properties... just switch to TS?
+	if (
+		typeof iconvOptions.decode !== 'object' &&
+		typeof iconvOptions.encode !== 'object'
+	) {
+		throw new PluginError(pluginName, {
+			message:
+				'`options.iconv` must specify a value for one or both of the properties `decode` and `encode`',
+		});
+	}
+
+	if (iconvOptions.decode && typeof iconvOptions.decode !== 'object') {
+		throw new PluginError(pluginName, {
+			message: '`options.iconv.decode` must be an object`',
+		});
+	}
+	iconvOptions.decode ??= {};
+
+	if (iconvOptions.encode && typeof iconvOptions.encode !== 'object') {
+		throw new PluginError(pluginName, {
+			message: '`options.iconv.encode` must be an object`',
+		});
+	}
+	iconvOptions.encode ??= {};
+
+	return gulpPlugin(
+		pluginName,
+		(file) => {
+			if (file.isBuffer()) {
+				const content = iconv.decode(file.contents, from, iconvOptions.decode);
+				file.contents = iconv.encode(content, to, iconvOptions.encode);
+			}
+
+			if (file.isStream()) {
 				file.contents = file.contents
-					.pipe(iconv.decodeStream(options.from, options.iconv.decode))
-					.pipe(iconv.encodeStream(options.to, options.iconv.encode));
-				this.push(file);
-			} catch (err) {
-				this.emit('error', new pluginError('gulp-convert-encoding', err));
+					.pipe(iconv.decodeStream(from, iconvOptions.decode))
+					.pipe(iconv.encodeStream(to, iconvOptions.encode));
 			}
-		}
 
-		if (file.isBuffer()) {
-			try {
-				var content = iconv.decode(
-					file.contents,
-					options.from,
-					options.iconv.decode,
-				);
-				file.contents = iconv.encode(content, options.to, options.iconv.encode);
-				this.push(file);
-			} catch (err) {
-				this.emit('error', new pluginError('gulp-convert-encoding', err));
-			}
-		}
-
-		cb();
-	});
-};
+			return file;
+		},
+		{ supportsAnyType: true },
+	);
+}

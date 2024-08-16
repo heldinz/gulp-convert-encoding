@@ -6,9 +6,27 @@ on:
     branches: ["main"]
 
 jobs:
-  test:
-    name: Test
+  lint:
+    name: Linting
     runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: "npm"
+
+      - name: Install
+        run: npm ci
+
+      - name: Lint
+        run: npm run linter
+
+  test:
+    name: Testing
+    runs-on: ubuntu-latest
+    needs: lint
 
     strategy:
       matrix:
@@ -21,11 +39,15 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: "npm"
-      - run: npm ci
-      - run: npm test
+
+      - name: Install
+        run: npm ci
+
+      - name: Test
+        run: npm test
 
   coverage:
-    name: Coverage
+    name: Coveralls
     runs-on: ubuntu-latest
     needs: test
 
@@ -35,10 +57,12 @@ jobs:
         with:
           node-version: 20.x
           cache: "npm"
-      - run: npm ci
+
+      - name: Install
+        run: npm ci
 
       - name: Coverage
-        run: npm run coverage:lcov
+        run: npm run coverage
 
       - name: Coveralls
         uses: coverallsapp/github-action@v2.3.0
