@@ -1,12 +1,12 @@
 {
   "name": "gulp-convert-encoding",
   "version": "3.0.0",
-  "description": "Convert files from one encoding to another using iconv-lite.",
+  "description": "Convert file encodings using iconv-lite.",
   "license": "MIT",
   "repository": "heldinz/gulp-convert-encoding",
   "author": {
     "name": "Alice Rose",
-    "email": "heldinz@posteo.de",
+    "email": "hello@alicerosemurphy.com",
     "url": "https://github.com/heldinz"
   },
   "engines": {
@@ -14,8 +14,8 @@
   },
   "scripts": {
     "test": "mocha -R spec",
-    "coverage": "nyc --reporter=html npm run test",
-    "coveralls": "nyc --reporter=lcovonly npm run test && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
+    "coverage:html": "nyc --reporter=html npm run test",
+    "coverage:lcov": "nyc --reporter=lcovonly npm run test"
   },
   "files": [
     "index.js"
@@ -25,8 +25,8 @@
     "iconv",
     "iconv-lite",
     "convert",
-    "encoding",
-    "decoding",
+    "file encoding",
+    "file decoding",
     "charset"
   ],
   "dependencies": {
@@ -35,7 +35,6 @@
     "through2": "3.0.1"
   },
   "devDependencies": {
-    "coveralls": "3.1.1",
     "event-stream": "3.3.4",
     "mocha": "10.1.0",
     "mocha-lcov-reporter": "1.3.0",
