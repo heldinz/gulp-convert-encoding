@@ -2,15 +2,24 @@
 
 ## Release 4.0.0
 
+Breaking changes:
+
 - Require Node 18
 - Require gulp 5
-- Upgrade dependencies
-- Move to ESM
+- Upgrade all dependencies
 
+Non-functional changes:
+
+- Move to ESM
+- Move to TypeScript
 - Add separate license file
-- Change test runner to ava
-- Change coverage tool to c8
-- Use native libs for tests
+
+Development-only changes:
+
+- Switch CI to GitHub Actions
+- Switch test runner to AVA
+- Switch coverage tool to c8
+- Test against native Node libs
 - Lint with eslint
 - Format with prettier
 

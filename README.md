@@ -2,7 +2,7 @@
 
 [![NPM version][npm-image]][npm-url] [![Downloads][downloads-image]][npm-url] ![Build Status][ci-image] [![Coveralls Status][coveralls-image]][coveralls-url]
 
-> Convert character encodings using [iconv-lite](https://github.com/ashtuchkin/iconv-lite).
+> Convert character encodings using [iconv-lite](https://github.com/ashtuchkin/iconv-lite). Supports streams.
 
 ## Install
 

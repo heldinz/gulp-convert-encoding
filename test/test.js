@@ -5,6 +5,9 @@ import test from 'ava';
 import { pEvent } from 'p-event';
 import PluginError from 'plugin-error';
 
+import * as ErrorBindings from '../src/error-bindings.js';
+import convertEncoding from '../index.js';
+
 import Constants, {
 	createFile,
 	setUpFromLatin1Buffer,
@@ -12,96 +15,42 @@ import Constants, {
 	setUpFromUTF8Buffer,
 	setUpFromUTF8Stream,
 } from './_helper.js';
-import convertEncoding from './index.js';
 
 const { LATIN1, UTF8 } = Constants;
 
-test('throws on empty options', (t) => {
+test('throws on missing encoding', (t) => {
 	t.throws(convertEncoding, {
 		any: true,
 		instanceOf: PluginError,
-		message: 'At least one of `options.from` or `options.to` is required',
+		message: ErrorBindings.missingEncoding,
 	});
 });
 
-test('throws on identical `from` and `to` options', (t) => {
+test('throws on unsupported encoding', (t) => {
 	t.throws(
 		() => {
-			convertEncoding({ from: UTF8 });
+			convertEncoding({ from: 'ahfkjdsahfk' });
 		},
 		{
 			any: true,
 			instanceOf: PluginError,
-			message:
-				'The `options.from` and `options.to` encodings must be different',
+			message: new RegExp(`^${ErrorBindings.unsupportedEncoding}`),
 		},
 	);
 });
 
-test('throws on non-object `iconv` option', (t) => {
-	t.throws(
-		() => {
-			convertEncoding({ from: LATIN1, iconv: '' });
-		},
-		{
-			any: true,
-			instanceOf: PluginError,
-			message: '`options.iconv` must be an object',
-		},
-	);
-});
+// TODO spy on console.warn
+// test.serial('warns on identical `from` and `to` options', (t) => {
+// 	convertEncoding({ from: UTF8 });
+// 	t.true(console.warn.calledOnce);
+// 	// ErrorBindings.sameEncoding,
+// });
 
-test('throws on empty `iconv` option', (t) => {
-	t.throws(
-		() => {
-			convertEncoding({ from: LATIN1, iconv: {} });
-		},
-		{
-			any: true,
-			instanceOf: PluginError,
-			message:
-				'`options.iconv` must specify a value for one or both of the properties `decode` and `encode`',
-		},
-	);
-});
-
-test('throws on non-object `iconv.decode` option', (t) => {
-	t.throws(
-		() => {
-			convertEncoding({ from: LATIN1, iconv: { decode: '' } });
-		},
-		{
-			any: true,
-			instanceOf: PluginError,
-			message: '`options.iconv.decode` must be an object`',
-		},
-	);
-});
-
-test('throws on non-object `iconv.encode` option', (t) => {
-	t.throws(
-		() => {
-			convertEncoding({ from: LATIN1, iconv: { encode: 4 } });
-		},
-		{
-			any: true,
-			instanceOf: PluginError,
-			message: '`options.iconv.encode` must be an object`',
-		},
-	);
-});
-
-test('does not throw when only `iconv.decode` is missing', (t) => {
-	t.notThrows(() => {
-		convertEncoding({ from: LATIN1, iconv: { encode: {} } });
-	});
-});
-
-test('does not throw when only `iconv.encode` is missing', (t) => {
-	t.notThrows(() => {
-		convertEncoding({ from: LATIN1, iconv: { decode: {} } });
-	});
-});
+// test.serial('warns on invalid `iconv` options', (t) => {
+// 	convertEncoding({ iconv: 'somestring' });
+// 	t.true(console.warn.calledOnce);
+// 	// ErrorBindings.invalidIconvOptions,
+// });
 
 test('ignores null files', async (t) => {
 	const stream = convertEncoding({ to: LATIN1 });

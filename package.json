@@ -18,9 +18,9 @@
 		"coverage": "c8 -r lcovonly npm test",
 		"formatter": "npm run prettier -- --list-different",
 		"formatter:fix": "npm run prettier -- --write",
-		"linter": "eslint *.js",
+		"linter": "eslint  */**/*.js",
 		"linter:fix": "npm run linter -- --fix",
-		"prettier": "prettier .*rc *.{js,json,md}",
+		"prettier": "prettier .*rc *.{json,md} */**/*.js",
 		"test": "ava",
 		"test:watch": "npm test -- --watch",
 		"prepare": "husky"

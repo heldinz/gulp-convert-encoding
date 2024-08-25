@@ -2,60 +2,48 @@ import iconv from 'iconv-lite';
 import { gulpPlugin } from 'gulp-plugin-extras';
 import PluginError from 'plugin-error';
 
+import * as ErrorBindings from './src/error-bindings.js';
+
 const pluginName = 'gulp-convert-encoding';
 const UTF8 = 'utf8';
 
 export default function gulpConvertEncoding(options) {
-	options = { ...options };
+	options = {
+		iconv: { decode: {}, encode: {} },
+		...options,
+	};
 
 	if (!options.from && !options.to) {
 		throw new PluginError(pluginName, {
-			message: 'At least one of `options.from` or `options.to` is required',
+			message: ErrorBindings.missingEncoding,
 		});
 	}
 
-	const {
-		from = UTF8,
-		to = UTF8,
-		iconv: iconvOptions = { decode: {}, encode: {} },
-	} = options;
+	const { from = UTF8, to = UTF8 } = options;
+
+	if (!iconv.encodingExists(from)) {
+		throw new PluginError(pluginName, {
+			message: `${ErrorBindings.unsupportedEncoding}: ${from}`,
+		});
+	}
+
+	if (!iconv.encodingExists(to)) {
+		throw new PluginError(pluginName, {
+			message: `${ErrorBindings.unsupportedEncoding}: ${to}`,
+		});
+	}
 
 	if (from === to) {
-		throw new PluginError(pluginName, {
-			message:
-				'The `options.from` and `options.to` encodings must be different',
-		});
+		console.warn(`${pluginName}: ${ErrorBindings.sameEncoding}`);
 	}
 
+	let { iconv: iconvOptions } = options;
 	if (typeof iconvOptions !== 'object') {
-		throw new PluginError(pluginName, {
-			message: '`options.iconv` must be an object',
-		});
+		console.warn(`${pluginName}: ${ErrorBindings.invalidIconvOptions}`);
+		iconvOptions = {};
 	}
 
-	// TODO sort out this mess with JS properties... just switch to TS?
-	if (
-		typeof iconvOptions.decode !== 'object' &&
-		typeof iconvOptions.encode !== 'object'
-	) {
-		throw new PluginError(pluginName, {
-			message:
-				'`options.iconv` must specify a value for one or both of the properties `decode` and `encode`',
-		});
-	}
-
-	if (iconvOptions.decode && typeof iconvOptions.decode !== 'object') {
-		throw new PluginError(pluginName, {
-			message: '`options.iconv.decode` must be an object`',
-		});
-	}
 	iconvOptions.decode ??= {};
-
-	if (iconvOptions.encode && typeof iconvOptions.encode !== 'object') {
-		throw new PluginError(pluginName, {
-			message: '`options.iconv.encode` must be an object`',
-		});
-	}
 	iconvOptions.encode ??= {};
 
 	return gulpPlugin(
