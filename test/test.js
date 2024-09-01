@@ -2,11 +2,12 @@ import { Buffer } from 'node:buffer';
 import { buffer } from 'node:stream/consumers';
 
 import test from 'ava';
+import { PluginError } from 'gulp-plugin-extras';
 import { pEvent } from 'p-event';
-import PluginError from 'plugin-error';
+import sinon from 'sinon';
 
-import * as ErrorBindings from '../src/error-bindings.js';
-import convertEncoding from '../index.js';
+import * as ErrorBindings from '../dist/error-bindings.js';
+import convertEncoding from '../dist/index.js';
 
 import Constants, {
 	createFile,
@@ -17,6 +18,27 @@ import Constants, {
 } from './_helper.js';
 
 const { LATIN1, UTF8 } = Constants;
+
+test.beforeEach((t) => {
+	t.context.warn = console.warn;
+	console.warn = sinon.spy();
+});
+
+test.afterEach((t) => {
+	console.warn = t.context.warn;
+});
+
+test.serial('warns on identical `from` and `to` options', (t) => {
+	convertEncoding({ from: UTF8 });
+	t.true(console.warn.calledOnce);
+	console.warn.calledWith(ErrorBindings.sameEncoding);
+});
+
+test.serial('warns on invalid `iconv` options', (t) => {
+	convertEncoding({ from: LATIN1, iconv: 'somestring' });
+	t.true(console.warn.calledOnce);
+	console.warn.calledWith(ErrorBindings.invalidIconvOptions);
+});
 
 test('throws on missing encoding', (t) => {
 	t.throws(convertEncoding, {
@@ -38,19 +60,6 @@ test('throws on unsupported encoding', (t) => {
 		},
 	);
 });
-
-// TODO spy on console.warn
-// test.serial('warns on identical `from` and `to` options', (t) => {
-// 	convertEncoding({ from: UTF8 });
-// 	t.true(console.warn.calledOnce);
-// 	// ErrorBindings.sameEncoding,
-// });
-
-// test.serial('warns on invalid `iconv` options', (t) => {
-// 	convertEncoding({ iconv: 'somestring' });
-// 	t.true(console.warn.calledOnce);
-// 	// ErrorBindings.invalidIconvOptions,
-// });
 
 test('ignores null files', async (t) => {
 	const stream = convertEncoding({ to: LATIN1 });

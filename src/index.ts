@@ -1,36 +1,48 @@
 import iconv from 'iconv-lite';
-import { gulpPlugin } from 'gulp-plugin-extras';
-import PluginError from 'plugin-error';
+import { gulpPlugin, PluginError } from 'gulp-plugin-extras';
 
-import * as ErrorBindings from './src/error-bindings.js';
+import * as ErrorBindings from './error-bindings.js';
 
 const pluginName = 'gulp-convert-encoding';
 const UTF8 = 'utf8';
 
-export default function gulpConvertEncoding(options) {
+import type { Options as IconvOptions } from 'iconv-lite';
+
+export interface Iconv {
+	decode?: IconvOptions;
+	encode?: IconvOptions;
+}
+
+export interface Options {
+	from?: string;
+	to?: string;
+	iconv?: Iconv;
+}
+
+export default function convertEncoding(options: Options) {
 	options = {
 		iconv: { decode: {}, encode: {} },
 		...options,
 	};
 
 	if (!options.from && !options.to) {
-		throw new PluginError(pluginName, {
-			message: ErrorBindings.missingEncoding,
-		});
+		throw new PluginError(pluginName, ErrorBindings.missingEncoding);
 	}
 
 	const { from = UTF8, to = UTF8 } = options;
 
 	if (!iconv.encodingExists(from)) {
-		throw new PluginError(pluginName, {
-			message: `${ErrorBindings.unsupportedEncoding}: ${from}`,
-		});
+		throw new PluginError(
+			pluginName,
+			`${ErrorBindings.unsupportedEncoding}: ${from}`,
+		);
 	}
 
 	if (!iconv.encodingExists(to)) {
-		throw new PluginError(pluginName, {
-			message: `${ErrorBindings.unsupportedEncoding}: ${to}`,
-		});
+		throw new PluginError(
+			pluginName,
+			`${ErrorBindings.unsupportedEncoding}: ${to}`,
+		);
 	}
 
 	if (from === to) {
@@ -49,9 +61,17 @@ export default function gulpConvertEncoding(options) {
 	return gulpPlugin(
 		pluginName,
 		(file) => {
+			if (file.isNull()) {
+				return file;
+			}
+
 			if (file.isBuffer()) {
-				const content = iconv.decode(file.contents, from, iconvOptions.decode);
-				file.contents = iconv.encode(content, to, iconvOptions.encode);
+				const decodedContent = iconv.decode(
+					file.contents,
+					from,
+					iconvOptions.decode,
+				);
+				file.contents = iconv.encode(decodedContent, to, iconvOptions.encode);
 			}
 
 			if (file.isStream()) {
@@ -62,6 +82,8 @@ export default function gulpConvertEncoding(options) {
 
 			return file;
 		},
-		{ supportsAnyType: true },
+		{
+			supportsAnyType: true,
+		},
 	);
 }

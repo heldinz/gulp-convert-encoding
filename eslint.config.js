@@ -1,7 +1,19 @@
+import eslint from '@eslint/js';
 import globals from 'globals';
-import pluginJs from '@eslint/js';
+import tseslint from 'typescript-eslint';
 
-export default [
-	{ languageOptions: { globals: globals.browser } },
-	pluginJs.configs.recommended,
-];
+export default tseslint.config(
+	{
+		ignores: ['**/dist/*', '**/coverage/*'],
+	},
+	eslint.configs.recommended,
+	...tseslint.configs.strict,
+	...tseslint.configs.stylistic,
+	{
+		languageOptions: {
+			globals: {
+				...globals.nodeBuiltin,
+			},
+		},
+	},
+);

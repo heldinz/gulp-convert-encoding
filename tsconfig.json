@@ -1,0 +1,10 @@
+{
+	"extends": "@tsconfig/node18/tsconfig.json",
+	"compilerOptions": {
+		"outDir": "./dist",
+		"declaration": true,
+		"noImplicitAny": true,
+		"strictNullChecks": true
+	},
+	"include": ["index.d.ts", "./src/*.ts"]
+}
