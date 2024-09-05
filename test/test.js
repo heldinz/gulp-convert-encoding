@@ -61,13 +61,45 @@ const unsupportedEncoding = test.macro({
 			},
 		);
 	},
-	title(option) {
-		return `throws on unsupported ${option} encoding`;
+	title(providedTitle) {
+		return `throws on unsupported ${providedTitle} encoding`;
 	},
 });
 
 for (let option of ['from', 'to']) {
 	test(option, unsupportedEncoding, option, 'ahfkjdsahfk');
+}
+
+const convert = test.macro({
+	async exec(t, input, expected) {
+		const { isStream = false, pluginOptions, to, vinylFile } = input;
+
+		const stream = convertEncoding(pluginOptions);
+		const promise = pEvent(stream, 'data');
+
+		stream.end(vinylFile);
+
+		const file = await promise;
+		const contentsBuffer = isStream
+			? await buffer(file.contents)
+			: Buffer.from(file.contents, to);
+		const actual = contentsBuffer.toString(to);
+
+		t.is(actual, expected);
+	},
+	title(_, { isStream, from, to }) {
+		return `converts a ${isStream ? 'stream' : 'buffer'} from ${from} to ${to}`;
+	},
+});
+
+const conversionTestCases = [
+	{ ...setUpFromUTF8Buffer() },
+	{ ...setUpFromLatin1Buffer() },
+	{ ...setUpFromUTF8Stream() },
+	{ ...setUpFromLatin1Stream() },
+];
+for (let testCase of conversionTestCases) {
+	test(convert, testCase, testCase.expected);
 }
 
 test('ignores null files', async (t) => {
@@ -79,66 +111,6 @@ test('ignores null files', async (t) => {
 	const file = await promise;
 	const actual = file.contents;
 	const expected = null;
-
-	t.is(actual, expected);
-});
-
-test(`converts a buffer from ${UTF8} to ${LATIN1}`, async (t) => {
-	const { to, iconvLiteTo, vinylFile, expected } = setUpFromUTF8Buffer();
-
-	const stream = convertEncoding({ to: iconvLiteTo });
-	const promise = pEvent(stream, 'data');
-
-	stream.end(vinylFile);
-
-	const file = await promise;
-	const contentsBuffer = Buffer.from(file.contents, to);
-	const actual = contentsBuffer.toString(to);
-
-	t.is(actual, expected);
-});
-
-test(`converts a buffer from ${LATIN1} to ${UTF8}`, async (t) => {
-	const { to, iconvLiteFrom, vinylFile, expected } = setUpFromLatin1Buffer();
-
-	const stream = convertEncoding({ from: iconvLiteFrom });
-	const promise = pEvent(stream, 'data');
-
-	stream.end(vinylFile);
-
-	const file = await promise;
-	const contentsBuffer = Buffer.from(file.contents, to);
-	const actual = contentsBuffer.toString(to);
-
-	t.is(actual, expected);
-});
-
-test(`converts a stream from ${UTF8} to ${LATIN1}`, async (t) => {
-	const { to, iconvLiteTo, vinylFile, expected } = setUpFromUTF8Stream();
-
-	const stream = convertEncoding({ to: iconvLiteTo });
-	const promise = pEvent(stream, 'data');
-
-	stream.end(vinylFile);
-
-	const file = await promise;
-	const contentsBuffer = await buffer(file.contents);
-	const actual = contentsBuffer.toString(to);
-
-	t.is(actual, expected);
-});
-
-test(`converts a stream from ${LATIN1} to ${UTF8}`, async (t) => {
-	const { to, iconvLiteFrom, vinylFile, expected } = setUpFromLatin1Stream();
-
-	const stream = convertEncoding({ from: iconvLiteFrom });
-	const promise = pEvent(stream, 'data');
-
-	stream.end(vinylFile);
-
-	const file = await promise;
-	const contentsBuffer = await buffer(file.contents);
-	const actual = contentsBuffer.toString(to);
 
 	t.is(actual, expected);
 });

@@ -18,15 +18,13 @@ export function createFile({ contents }) {
 
 const setUp = ({ isFromLatin1 = false, isStream = false } = {}) => {
 	let from = UTF8;
-	let iconvLiteFrom = UTF8;
 	let to = LATIN1;
-	let iconvLiteTo = LATIN1_ISO;
+	let pluginOptions = { to: LATIN1_ISO };
 
 	if (isFromLatin1) {
 		from = LATIN1;
-		iconvLiteFrom = LATIN1_ISO;
 		to = UTF8;
-		iconvLiteTo = UTF8;
+		pluginOptions = { from: LATIN1_ISO };
 	}
 
 	const defaultBuffer = Buffer.from(testString);
@@ -41,10 +39,10 @@ const setUp = ({ isFromLatin1 = false, isStream = false } = {}) => {
 	return {
 		from,
 		to,
-		iconvLiteFrom,
-		iconvLiteTo,
+		pluginOptions,
 		vinylFile: createFile({ contents: fileContents }),
 		expected: testString,
+		isStream,
 	};
 };
 
