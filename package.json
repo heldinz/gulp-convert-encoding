@@ -28,6 +28,7 @@
 		"compiler:check": "npm run compiler -- --noEmit",
 		"compiler:watch": "npm run compiler -- --watch",
 		"coverage": "c8 -r lcovonly npm test",
+		"coverage:text": "c8 npm test",
 		"formatter": "npm run prettier -- --list-different",
 		"formatter:fix": "npm run prettier -- --write",
 		"linter": "eslint '**/*.{js,ts}'",

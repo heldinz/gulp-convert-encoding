@@ -48,18 +48,27 @@ test('throws on missing encoding', (t) => {
 	});
 });
 
-test('throws on unsupported encoding', (t) => {
-	t.throws(
-		() => {
-			convertEncoding({ from: 'ahfkjdsahfk' });
-		},
-		{
-			any: true,
-			instanceOf: PluginError,
-			message: new RegExp(`^${ErrorBindings.unsupportedEncoding}`),
-		},
-	);
+const unsupportedEncoding = test.macro({
+	exec(t, option, input) {
+		t.throws(
+			() => {
+				convertEncoding({ [option]: input });
+			},
+			{
+				any: true,
+				instanceOf: PluginError,
+				message: new RegExp(`^${ErrorBindings.unsupportedEncoding}`),
+			},
+		);
+	},
+	title(option) {
+		return `throws on unsupported ${option} encoding`;
+	},
 });
+
+for (let option of ['from', 'to']) {
+	test(option, unsupportedEncoding, option, 'ahfkjdsahfk');
+}
 
 test('ignores null files', async (t) => {
 	const stream = convertEncoding({ to: LATIN1 });
