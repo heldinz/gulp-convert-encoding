@@ -24,14 +24,15 @@
 		"node": ">=18"
 	},
 	"scripts": {
-		"compile": "tsc -p .",
-		"compile:watch": "npm run compile -- --watch",
+		"compiler": "tsc",
+		"compiler:check": "npm run compiler -- --noEmit",
+		"compiler:watch": "npm run compiler -- --watch",
 		"coverage": "c8 -r lcovonly npm test",
 		"formatter": "npm run prettier -- --list-different",
 		"formatter:fix": "npm run prettier -- --write",
-		"linter": "eslint --no-warn-ignored '**/*.{js,ts}'",
+		"linter": "eslint '**/*.{js,ts}'",
 		"linter:fix": "npm run linter -- --fix",
-		"prettier": "prettier .*rc *.{json,md} ./src/*.ts ./test/*.js",
+		"prettier": "prettier .*rc *.{json,md} ./**/*.{js,ts}",
 		"test": "ava",
 		"test:watch": "npm test -- --watch",
 		"prepare": "husky"
@@ -39,7 +40,8 @@
 	"lint-staged": {
 		".*rc": "prettier --write",
 		"*.{json,md}": "prettier --write",
-		"*.{js,ts}": ["eslint --fix", "prettier --write"]
+		"*.js": ["eslint --fix", "prettier --write"],
+		"*.ts": ["npm run compiler:check", "eslint --fix", "prettier --write"]
 	},
 	"keywords": [
 		"character encoding",
@@ -55,7 +57,7 @@
 		"iconv-lite"
 	],
 	"dependencies": {
-		"gulp-plugin-extras": "1.0.0",
+		"gulp-plugin-extras": "github:heldinz/gulp-plugin-extras#fix-types-export-plugin-error",
 		"iconv-lite": "0.6.3"
 	},
 	"devDependencies": {

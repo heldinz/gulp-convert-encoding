@@ -20,8 +20,14 @@ jobs:
       - name: Install
         run: npm ci
 
-      - name: Lint
+      - name: Compiler
+        run: npm run compiler:check
+
+      - name: Linter
         run: npm run linter
+
+      - name: Formatter
+        run: npm run formatter
 
   test:
     name: Testing
