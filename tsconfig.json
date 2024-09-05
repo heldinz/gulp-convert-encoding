@@ -6,5 +6,5 @@
 		"noImplicitAny": true,
 		"strictNullChecks": true
 	},
-	"include": ["index.d.ts", "./src/*.ts"]
+	"include": ["./src/*.ts"]
 }
