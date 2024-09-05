@@ -2,7 +2,7 @@
 
 [![NPM version][npm-image]][npm-url] [![Downloads][downloads-image]][npm-url] ![Build Status][ci-image] [![Coveralls Status][coveralls-image]][coveralls-url]
 
-> Convert file encodings using [iconv-lite](https://github.com/ashtuchkin/iconv-lite).
+> Convert character encodings using [iconv-lite](https://github.com/ashtuchkin/iconv-lite). Supports streams.
 
 ## Install
 
@@ -13,47 +13,48 @@ npm install --save-dev gulp-convert-encoding
 ## Usage
 
 ```js
-var gulp = require('gulp');
-var convertEncoding = require('gulp-convert-encoding');
+import gulp from 'gulp';
+import convertEncoding from 'gulp-convert-encoding';
 
-gulp.task('default', function () {
-	return gulp
+export default () =>
+	gulp
 		.src('src/file.txt')
-		.pipe(convertEncoding({ to: 'iso-8859-15' }))
+		.pipe(convertEncoding({ from: 'iso-8859-1' }))
 		.pipe(gulp.dest('dist'));
-});
 ```
 
 ## API
 
 ### convertEncoding(options)
 
+> [!IMPORTANT]  
+> You must provide one or both of the `from` and `to` options.
+> [Supported encodings](https://github.com/ashtuchkin/iconv-lite/wiki/Supported-Encodings) are listed on the iconv-lite wiki.
+
 #### options
 
-One or both of the original and/or target file encodings must be specified.
-
-[Supported encodings](https://github.com/ashtuchkin/iconv-lite/wiki/Supported-Encodings) are listed on the iconv-lite wiki.
+Type: `object`
 
 ##### from
 
 Type: `string`  
 Default: `utf8`
 
-The original file encoding.
+The current character encoding.
 
 ##### to
 
 Type: `string`  
 Default: `utf8`
 
-The target file encoding.
+The target character encoding.
 
 ##### iconv
 
 Type: `object`  
 Default: `{ decode: {}, encode: {} }`
 
-Allows you to pass additional options into `iconv-lite`, for example [BOM Handling](https://github.com/ashtuchkin/iconv-lite#bom-handling).
+Allows you to pass additional options (e.g. for [BOM Handling](https://github.com/ashtuchkin/iconv-lite#bom-handling)) into `iconv-lite`.
 
 <!-- prettier-ignore-start -->
 [npm-url]: https://www.npmjs.com/package/gulp-convert-encoding
