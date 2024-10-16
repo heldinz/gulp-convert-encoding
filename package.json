@@ -58,7 +58,7 @@
 		"iconv-lite"
 	],
 	"dependencies": {
-		"gulp-plugin-extras": "github:heldinz/gulp-plugin-extras#fix-types-export-plugin-error",
+		"gulp-plugin-extras": "1.1.0",
 		"iconv-lite": "0.6.3"
 	},
 	"devDependencies": {
