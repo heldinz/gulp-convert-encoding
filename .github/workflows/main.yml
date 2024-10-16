@@ -71,4 +71,4 @@ jobs:
         run: npm run coverage
 
       - name: Coveralls
-        uses: coverallsapp/github-action@v2.3.1
+        uses: coverallsapp/github-action@v2.3.3
