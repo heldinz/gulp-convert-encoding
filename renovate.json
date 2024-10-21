@@ -1,6 +1,10 @@
 {
 	"$schema": "https://docs.renovatebot.com/renovate-schema.json",
-	"extends": ["config:best-practices", "npm:unpublishSafe"],
+	"extends": [
+		"config:best-practices",
+		"npm:unpublishSafe",
+		"schedule:weekends"
+	],
 	"assignees": ["heldinz"],
 	"packageRules": [
 		{
@@ -8,6 +12,5 @@
 			"automerge": true,
 			"automergeStrategy": "squash"
 		}
-	],
-	"schedule": ["weekends"]
+	]
 }
