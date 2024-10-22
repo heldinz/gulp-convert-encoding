@@ -6,8 +6,7 @@ import { PluginError } from 'gulp-plugin-extras';
 import { pEvent } from 'p-event';
 import sinon from 'sinon';
 
-import * as ErrorBindings from '../dist/error-bindings.js';
-import convertEncoding from '../dist/index.js';
+import convertEncoding, { ErrorBindings } from '../dist/index.js';
 
 import Constants, {
 	createFile,
