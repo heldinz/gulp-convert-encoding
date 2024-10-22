@@ -1,8 +1,16 @@
 import iconv from 'iconv-lite';
 import { gulpPlugin, PluginError } from 'gulp-plugin-extras';
-import * as ErrorBindings from './error-bindings.js';
 const pluginName = 'gulp-convert-encoding';
 const UTF8 = 'utf8';
+export const ErrorBindings = {
+	missingEncoding:
+		'Missing encoding: at least one of `options.from` or `options.to` is required',
+	invalidIconvOptions:
+		'Ignoring invalid option: `options.iconv` should be an object with `decode` and/or `encode` properties',
+	sameEncoding:
+		'Same encodings for `options.from` and `options.to`: are you sure?',
+	unsupportedEncoding: 'Unsupported encoding',
+};
 export default function convertEncoding(options) {
 	options = {
 		iconv: { decode: {}, encode: {} },

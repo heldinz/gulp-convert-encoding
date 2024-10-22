@@ -8,6 +8,12 @@ export interface Options {
 	to?: string;
 	iconv?: Iconv;
 }
+export declare const ErrorBindings: {
+	missingEncoding: string;
+	invalidIconvOptions: string;
+	sameEncoding: string;
+	unsupportedEncoding: string;
+};
 export default function convertEncoding(
 	options: Options,
 ): NodeJS.ReadableStream;

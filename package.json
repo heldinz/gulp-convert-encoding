@@ -14,12 +14,7 @@
 		"types": "./dist/index.d.ts",
 		"default": "./dist/index.js"
 	},
-	"files": [
-		"dist/index.js",
-		"dist/error-bindings.js",
-		"dist/index.d.ts",
-		"dist/error-bindings.ts"
-	],
+	"files": ["dist"],
 	"engines": {
 		"node": ">=18"
 	},
@@ -41,8 +36,7 @@
 	"lint-staged": {
 		".*rc": "prettier --write",
 		"*.{json,md}": "prettier --write",
-		"*.js": ["eslint --fix", "prettier --write"],
-		"*.ts": ["npm run compiler:check", "eslint --fix", "prettier --write"]
+		"*.{js,ts}": ["eslint --fix", "prettier --write"]
 	},
 	"keywords": [
 		"character encoding",
