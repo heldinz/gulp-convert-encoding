@@ -74,7 +74,7 @@
 		"vinyl": "3.0.0"
 	},
 	"peerDependencies": {
-		"gulp": ">=4 <5"
+		"gulp": ">=4 <6"
 	},
 	"peerDependenciesMeta": {
 		"gulp": {
