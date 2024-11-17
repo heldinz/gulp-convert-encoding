@@ -2,7 +2,12 @@
 
 [![NPM version][npm-image]][npm-url] [![Downloads][downloads-image]][npm-url] ![Build Status][ci-image] [![Coveralls Status][coveralls-image]][coveralls-url]
 
-> Convert character encodings using [iconv-lite](https://github.com/ashtuchkin/iconv-lite). Supports streams.
+Convert character encodings in gulp v4 using [iconv-lite](https://github.com/ashtuchkin/iconv-lite). Supports streams.
+
+> [!NOTE]
+> As of gulp v5, this plugin is redundant: gulp v5 includes native support for transcoding text files using iconv-lite.
+>
+> You can migrate away from this plugin by passing `from` and `to` as `options.encoding` to `src` and `dest` respectively. The default encoding is `utf8`.
 
 ## Install
 
@@ -19,7 +24,7 @@ import convertEncoding from 'gulp-convert-encoding';
 export default () =>
 	gulp
 		.src('src/file.txt')
-		.pipe(convertEncoding({ from: 'iso-8859-1' }))
+		.pipe(convertEncoding({ from: 'latin1' }))
 		.pipe(gulp.dest('dist'));
 ```
 
@@ -27,7 +32,7 @@ export default () =>
 
 ### convertEncoding(options)
 
-> [!IMPORTANT]  
+> [!IMPORTANT]
 > You must provide one or both of the `from` and `to` options.
 > [Supported encodings](https://github.com/ashtuchkin/iconv-lite/wiki/Supported-Encodings) are listed on the iconv-lite wiki.
 
