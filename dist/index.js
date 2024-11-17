@@ -20,17 +20,13 @@ export default function convertEncoding(options) {
 		throw new PluginError(pluginName, ErrorBindings.missingEncoding);
 	}
 	const { from = UTF8, to = UTF8 } = options;
-	if (!iconv.encodingExists(from)) {
-		throw new PluginError(
-			pluginName,
-			`${ErrorBindings.unsupportedEncoding}: ${from}`,
-		);
-	}
-	if (!iconv.encodingExists(to)) {
-		throw new PluginError(
-			pluginName,
-			`${ErrorBindings.unsupportedEncoding}: ${to}`,
-		);
+	for (const option of [from, to]) {
+		if (!iconv.encodingExists(option)) {
+			throw new PluginError(
+				pluginName,
+				`${ErrorBindings.unsupportedEncoding}: ${option}`,
+			);
+		}
 	}
 	if (from === to) {
 		console.warn(`${pluginName}: ${ErrorBindings.sameEncoding}`);
@@ -49,17 +45,25 @@ export default function convertEncoding(options) {
 				return file;
 			}
 			if (file.isBuffer()) {
-				const decodedContent = iconv.decode(
-					file.contents,
-					from,
-					iconvOptions.decode,
-				);
-				file.contents = iconv.encode(decodedContent, to, iconvOptions.encode);
+				try {
+					const decodedContent = iconv.decode(
+						file.contents,
+						from,
+						iconvOptions.decode,
+					);
+					file.contents = iconv.encode(decodedContent, to, iconvOptions.encode);
+				} catch (err) {
+					throw new PluginError(pluginName, err);
+				}
 			}
 			if (file.isStream()) {
-				file.contents = file.contents
-					.pipe(iconv.decodeStream(from, iconvOptions.decode))
-					.pipe(iconv.encodeStream(to, iconvOptions.encode));
+				try {
+					file.contents = file.contents
+						.pipe(iconv.decodeStream(from, iconvOptions.decode))
+						.pipe(iconv.encodeStream(to, iconvOptions.encode));
+				} catch (err) {
+					throw new PluginError(pluginName, err);
+				}
 			}
 			return file;
 		},
