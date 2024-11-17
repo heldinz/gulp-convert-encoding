@@ -3,31 +3,28 @@ import { Readable } from 'node:stream';
 
 import Vinyl from 'vinyl';
 
-const testString = 'äöüß';
-const UTF8 = 'utf8';
 const LATIN1 = 'latin1';
-const LATIN1_ISO = 'iso-8859-1';
+const TEST_STRING = 'äöüß';
+const UTF8 = 'utf8';
 
 export function createFile({ contents }) {
-	const file = new Vinyl({
+	return new Vinyl({
 		contents,
 	});
-
-	return file;
 }
 
 const setUp = ({ isFromLatin1 = false, isStream = false } = {}) => {
 	let from = UTF8;
 	let to = LATIN1;
-	let pluginOptions = { to: LATIN1_ISO };
+	let pluginOptions = { to: LATIN1 };
 
 	if (isFromLatin1) {
 		from = LATIN1;
 		to = UTF8;
-		pluginOptions = { from: LATIN1_ISO };
+		pluginOptions = { from: LATIN1 };
 	}
 
-	const defaultBuffer = Buffer.from(testString);
+	const defaultBuffer = Buffer.from(TEST_STRING);
 	const fileContentsBuffer = isFromLatin1
 		? transcode(defaultBuffer, to, from)
 		: defaultBuffer;
@@ -41,7 +38,7 @@ const setUp = ({ isFromLatin1 = false, isStream = false } = {}) => {
 		to,
 		pluginOptions,
 		vinylFile: createFile({ contents: fileContents }),
-		expected: testString,
+		expected: TEST_STRING,
 		isStream,
 	};
 };
