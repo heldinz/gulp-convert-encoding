@@ -71,7 +71,7 @@
 		"sinon": "20.0.0",
 		"typescript": "5.8.3",
 		"typescript-eslint": "8.33.1",
-		"vinyl": "3.0.0"
+		"vinyl": "3.0.1"
 	},
 	"peerDependencies": {
 		"gulp": ">=4 <5"
