@@ -69,7 +69,7 @@
 		"p-event": "6.0.1",
 		"prettier": "3.6.2",
 		"sinon": "20.0.0",
-		"typescript": "5.8.3",
+		"typescript": "5.9.2",
 		"typescript-eslint": "8.39.0",
 		"vinyl": "3.0.1"
 	},
