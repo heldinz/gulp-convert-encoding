@@ -65,7 +65,7 @@
 		"eslint": "9.39.1",
 		"globals": "16.5.0",
 		"husky": "9.1.7",
-		"lint-staged": "15.5.2",
+		"lint-staged": "16.2.7",
 		"p-event": "6.0.1",
 		"prettier": "3.7.4",
 		"sinon": "20.0.0",
