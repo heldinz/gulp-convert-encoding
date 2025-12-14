@@ -53,7 +53,7 @@
 	],
 	"dependencies": {
 		"gulp-plugin-extras": "1.1.0",
-		"iconv-lite": "0.7.0"
+		"iconv-lite": "0.7.1"
 	},
 	"devDependencies": {
 		"@eslint/js": "9.39.1",
